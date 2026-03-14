@@ -1,59 +1,151 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Candidate Screening Tool
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A lightweight internal tool to manage candidate screening after importing an Excel sheet with initial scores. Built with Laravel, Blade, and Tailwind CSS (shadcn/ui-inspired theming).
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Role-Based Access** — Admin and Interviewer roles with permission-based UI
+- **Excel Upload** — Import candidates via `.xlsx`, `.xls`, or `.csv` files
+- **Candidate Dashboard** — Filterable, paginated list with AJAX-powered instant filtering
+- **Evaluation Form** — Mark candidates as Cleared / Not Cleared with remarks
+- **Round Progression** — 4 interview rounds with automatic advancement on clearance
+- **Interview History** — Full audit trail of all evaluations per candidate
+- **Status Tracking** — Color-coded badges for round status and final result
+- **Interviewer Assignment** — Admin can assign interviewers inline from the dashboard
+- **Revert Action** — Admin can revert rejected/selected candidates back to pending
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Layer    | Technology                          |
+|----------|-------------------------------------|
+| Backend  | Laravel (PHP)                       |
+| Frontend | Blade + Tailwind CSS (shadcn theme) |
+| Database | MySQL                               |
+| Auth     | Laravel built-in (session-based)    |
+| Excel    | Maatwebsite/Laravel-Excel           |
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- MySQL 8.0+
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+```bash
+# Clone the repo
+git clone https://github.com/ManishJangid007/candidate-screening.git
+cd candidate-screening
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Install dependencies
+composer install
+npm install
 
-### Premium Partners
+# Environment setup
+cp .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Update `.env` with your database credentials:
 
-## Contributing
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=screening_tool
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Run migrations and seed
+php artisan migrate
+php artisan db:seed
 
-## Code of Conduct
+# Build assets
+npm run build
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Start the server
+php artisan serve
+```
 
-## Security Vulnerabilities
+The app will be available at `http://localhost:8000`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Default Login Credentials
 
-## License
+| User           | Email                          | Password   | Role        |
+|----------------|--------------------------------|------------|-------------|
+| Admin          | admin@screening.com            | password   | Admin       |
+| Priya Sharma   | priya.sharma@screening.com     | password   | Interviewer |
+| Nitesh Gupta   | nitesh.gupta@screening.com     | password   | Interviewer |
+| Amit Desai     | amit.desai@screening.com       | password   | Interviewer |
+| Sneha Kulkarni | sneha.kulkarni@screening.com   | password   | Interviewer |
+| Rahul Mehta    | rahul.mehta@screening.com      | password   | Interviewer |
+| Pooja Nair     | pooja.nair@screening.com       | password   | Interviewer |
+| Vikram Singh   | vikram.singh@screening.com     | password   | Interviewer |
+| Anjali Verma   | anjali.verma@screening.com     | password   | Interviewer |
+| Karan Joshi    | karan.joshi@screening.com      | password   | Interviewer |
+| Divya Iyer     | divya.iyer@screening.com       | password   | Interviewer |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Excel Upload Format
+
+The uploaded Excel file must have these columns:
+
+| Column         | Required |
+|----------------|----------|
+| ID             | Yes      |
+| Student Name   | Yes      |
+| Aptitude Score | No       |
+| Test Score     | No       |
+| Video Score    | No       |
+
+## Permissions
+
+| Feature                    | Admin | Interviewer |
+|----------------------------|:-----:|:-----------:|
+| Upload Excel               |  Yes  |     No      |
+| View all candidates        |  Yes  |     No      |
+| View assigned candidates   |  Yes  |     Yes     |
+| Assign interviewer         |  Yes  |     No      |
+| Submit evaluation          |  Yes  |     Yes     |
+| Revert candidate status    |  Yes  |     No      |
+
+## Interview Round Progression
+
+- **Cleared (Round 1-3)** — Candidate advances to next round, status resets to Pending
+- **Cleared (Round 4)** — Final Result becomes "Final Selected"
+- **Not Cleared (any round)** — Final Result becomes "Rejected", no further progression
+- **Revert** — Admin can reset rejected/selected candidates back to Pending
+
+## Project Structure
+
+```
+app/
+  Http/Controllers/
+    AuthController.php        # Login/logout
+    CandidateController.php   # List, detail, evaluate, assign, revert
+    ExcelController.php       # Excel upload
+  Http/Middleware/
+    AdminMiddleware.php       # Admin role gate
+  Imports/
+    CandidatesImport.php      # Excel import logic
+  Models/
+    User.php                  # User with role (admin/interviewer)
+    Candidate.php             # Candidate with scores, round, status
+    InterviewRound.php        # Evaluation history per round
+config/
+  interviewers.php            # Hard-coded interviewer list
+database/
+  migrations/                 # Users, candidates, interview_rounds
+  seeders/                    # Default users and sample candidates
+resources/
+  css/app.css                 # shadcn/ui design tokens and components
+  views/
+    auth/login.blade.php      # Login page
+    candidates/index.blade.php # Dashboard with AJAX table
+    candidates/show.blade.php  # Candidate detail + evaluation
+    layouts/app.blade.php      # Main layout
+routes/
+  web.php                     # All routes with auth and admin middleware
+```
