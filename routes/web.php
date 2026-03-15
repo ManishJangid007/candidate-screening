@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/candidates/{candidate}/assign', [CandidateController::class, 'assignInterviewer'])->name('candidates.assign');
         Route::post('/candidates/{candidate}/change-interviewer', [CandidateController::class, 'changeInterviewer'])->name('candidates.change-interviewer');
         Route::post('/candidates/{candidate}/revert', [CandidateController::class, 'revert'])->name('candidates.revert');
+        Route::get('/excel/export', [ExcelController::class, 'export'])->name('excel.export');
         Route::get('/excel/sample', [ExcelController::class, 'sample'])->name('excel.sample');
         Route::post('/excel/upload', [ExcelController::class, 'upload'])->name('excel.upload');
     });

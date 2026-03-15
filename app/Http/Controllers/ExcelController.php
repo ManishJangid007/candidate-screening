@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CandidatesExport;
 use App\Exports\SampleCandidatesExport;
 use App\Imports\CandidatesImport;
 use Illuminate\Http\Request;
@@ -9,6 +10,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ExcelController extends Controller
 {
+    public function export()
+    {
+        $filename = 'candidates_report_' . now()->format('Y_m_d_His') . '.xlsx';
+        return Excel::download(new CandidatesExport(), $filename);
+    }
+
     public function sample()
     {
         return Excel::download(new SampleCandidatesExport(), 'sample_candidates.xlsx');

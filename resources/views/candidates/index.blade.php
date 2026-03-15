@@ -7,6 +7,7 @@
 
     @if(Auth::user()->isAdmin())
     <div class="flex items-center gap-2">
+        <a href="{{ route('excel.export') }}" class="btn-outline">Export Report</a>
         <a href="{{ route('excel.sample') }}" class="btn-outline">Sample Excel</a>
         <button type="button" onclick="document.getElementById('excel-file-input').click();" class="btn-primary">
             Upload Excel
