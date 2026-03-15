@@ -14,8 +14,7 @@ class Candidate extends Model
         'test_score',
         'video_score',
         'current_round',
-        'round_status',
-        'final_result',
+        'status',
         'interviewer',
     ];
 
@@ -24,48 +23,25 @@ class Candidate extends Model
         return $this->hasMany(InterviewRound::class)->orderBy('round_number');
     }
 
-    public function getRoundLabelAttribute(): string
-    {
-        return 'Round ' . $this->current_round;
-    }
-
     public function getStatusBadgeClassAttribute(): string
     {
-        return match ($this->round_status) {
+        return match ($this->status) {
             'pending' => 'bg-yellow-100 text-yellow-800',
-            'cleared' => 'bg-green-100 text-green-800',
-            'not_cleared' => 'bg-red-100 text-red-800',
-            default => 'bg-gray-100 text-gray-800',
-        };
-    }
-
-    public function getFinalResultBadgeClassAttribute(): string
-    {
-        return match ($this->final_result) {
-            'in_progress' => 'bg-blue-100 text-blue-800',
+            'on_hold' => 'bg-purple-100 text-purple-800',
+            'selected' => 'bg-green-100 text-green-800',
             'rejected' => 'bg-red-100 text-red-800',
-            'final_selected' => 'bg-green-100 text-green-800',
             default => 'bg-gray-100 text-gray-800',
         };
     }
 
     public function getFormattedStatusAttribute(): string
     {
-        return match ($this->round_status) {
+        return match ($this->status) {
             'pending' => 'Pending',
-            'cleared' => 'Cleared',
-            'not_cleared' => 'Not Cleared',
-            default => ucfirst($this->round_status),
-        };
-    }
-
-    public function getFormattedFinalResultAttribute(): string
-    {
-        return match ($this->final_result) {
-            'in_progress' => 'In Progress',
+            'on_hold' => 'On Hold',
+            'selected' => 'Selected',
             'rejected' => 'Rejected',
-            'final_selected' => 'Final Selected',
-            default => ucfirst($this->final_result),
+            default => ucfirst($this->status),
         };
     }
 }

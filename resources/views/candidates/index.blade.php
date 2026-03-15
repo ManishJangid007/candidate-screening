@@ -19,49 +19,35 @@
 </div>
 
 {{-- Stats Section --}}
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-    <div class="card flex items-center justify-center">
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+    <div class="card">
         <div class="card-content pt-4 pb-4 text-center">
             <p class="text-2xl font-bold" id="stat-total">{{ $stats['total'] }}</p>
-            <p class="text-xs text-muted-foreground mt-1">Total Candidates</p>
+            <p class="text-xs text-muted-foreground mt-1">Total</p>
         </div>
     </div>
     <div class="card">
-        <div class="card-header pb-2">
-            <h3 class="text-sm font-medium text-muted-foreground">Round Status</h3>
-        </div>
-        <div class="card-content">
-            <div class="grid grid-cols-2 gap-3 text-center">
-                <div>
-                    <p class="text-2xl font-bold text-yellow-600" id="stat-pending">{{ $stats['pending'] }}</p>
-                    <p class="text-xs text-muted-foreground mt-1">Pending</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-red-600" id="stat-not-cleared">{{ $stats['not_cleared'] }}</p>
-                    <p class="text-xs text-muted-foreground mt-1">Not Cleared</p>
-                </div>
-            </div>
+        <div class="card-content pt-4 pb-4 text-center">
+            <p class="text-2xl font-bold text-yellow-600" id="stat-pending">{{ $stats['pending'] }}</p>
+            <p class="text-xs text-muted-foreground mt-1">Pending</p>
         </div>
     </div>
     <div class="card">
-        <div class="card-header pb-2">
-            <h3 class="text-sm font-medium text-muted-foreground">Final Result</h3>
+        <div class="card-content pt-4 pb-4 text-center">
+            <p class="text-2xl font-bold text-purple-600" id="stat-on-hold">{{ $stats['on_hold'] }}</p>
+            <p class="text-xs text-muted-foreground mt-1">On Hold</p>
         </div>
-        <div class="card-content">
-            <div class="grid grid-cols-3 gap-3 text-center">
-                <div>
-                    <p class="text-2xl font-bold text-blue-600" id="stat-in-progress">{{ $stats['in_progress'] }}</p>
-                    <p class="text-xs text-muted-foreground mt-1">In Progress</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-red-600" id="stat-rejected">{{ $stats['rejected'] }}</p>
-                    <p class="text-xs text-muted-foreground mt-1">Rejected</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-green-600" id="stat-final-selected">{{ $stats['final_selected'] }}</p>
-                    <p class="text-xs text-muted-foreground mt-1">Final Selected</p>
-                </div>
-            </div>
+    </div>
+    <div class="card">
+        <div class="card-content pt-4 pb-4 text-center">
+            <p class="text-2xl font-bold text-green-600" id="stat-selected">{{ $stats['selected'] }}</p>
+            <p class="text-xs text-muted-foreground mt-1">Selected</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-content pt-4 pb-4 text-center">
+            <p class="text-2xl font-bold text-red-600" id="stat-rejected">{{ $stats['rejected'] }}</p>
+            <p class="text-xs text-muted-foreground mt-1">Rejected</p>
         </div>
     </div>
 </div>
@@ -93,11 +79,13 @@
                     </select>
                 </div>
                 <div>
-                    <label for="round_status" class="block text-sm font-medium text-muted-foreground mb-1">Status</label>
-                    <select name="round_status" id="round_status" class="form-select w-full filter-select">
+                    <label for="status" class="block text-sm font-medium text-muted-foreground mb-1">Status</label>
+                    <select name="status" id="status" class="form-select w-full filter-select">
                         <option value="">All Statuses</option>
                         <option value="pending">Pending</option>
-                        <option value="not_cleared">Not Cleared</option>
+                        <option value="on_hold">On Hold</option>
+                        <option value="selected">Selected</option>
+                        <option value="rejected">Rejected</option>
                     </select>
                 </div>
                 @if(Auth::user()->isAdmin())
@@ -109,15 +97,6 @@
                         @foreach($interviewers as $interviewer)
                             <option value="{{ $interviewer }}">{{ $interviewer }}</option>
                         @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="final_result" class="block text-sm font-medium text-muted-foreground mb-1">Final Result</label>
-                    <select name="final_result" id="final_result" class="form-select w-full filter-select">
-                        <option value="">All Results</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="final_selected">Final Selected</option>
                     </select>
                 </div>
                 @endif
@@ -147,14 +126,13 @@
                         <th>Video</th>
                         <th>Round</th>
                         <th>Status</th>
-                        <th>Final Result</th>
                         <th>Interviewer</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="candidates-tbody">
                     <tr>
-                        <td colspan="10" class="text-center text-muted-foreground py-8">Loading...</td>
+                        <td colspan="9" class="text-center text-muted-foreground py-8">Loading...</td>
                     </tr>
                 </tbody>
             </table>
@@ -181,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     let debounceTimer = null;
 
-    // Fetch candidates via AJAX
     function fetchCandidates(page) {
         currentPage = page || 1;
         const params = new URLSearchParams();
@@ -195,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
         params.set('page', currentPage);
 
         const tbody = document.getElementById('candidates-tbody');
-        tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted-foreground py-8">Loading...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted-foreground py-8">Loading...</td></tr>';
 
         fetch(APP_CONFIG.indexUrl + '?' + params.toString(), {
             headers: {
@@ -210,16 +187,15 @@ document.addEventListener('DOMContentLoaded', function () {
             renderPagination(data.pagination);
         })
         .catch(function (err) {
-            tbody.innerHTML = '<tr><td colspan="10" class="text-center text-red-600 py-8">Error loading data.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-red-600 py-8">Error loading data.</td></tr>';
         });
     }
 
-    // Render table rows
     function renderTable(candidates) {
         const tbody = document.getElementById('candidates-tbody');
 
         if (!candidates || candidates.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted-foreground py-8">No candidates found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted-foreground py-8">No candidates found.</td></tr>';
             return;
         }
 
@@ -232,10 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
             html += '<td>' + (c.test_score ?? '-') + '</td>';
             html += '<td>' + (c.video_score ?? '-') + '</td>';
             html += '<td>Round ' + c.current_round + '</td>';
-            html += '<td><span class="badge ' + c.round_status_badge + '">' + escHtml(c.round_status_label) + '</span></td>';
-            html += '<td><span class="badge ' + c.final_result_badge + '">' + escHtml(c.final_result_label) + '</span></td>';
+            html += '<td><span class="badge ' + c.status_badge + '">' + escHtml(c.status_label) + '</span></td>';
 
-            // Interviewer column
             if (APP_CONFIG.isAdmin) {
                 html += '<td>';
                 html += '<select class="form-select btn-sm assign-interviewer" data-url="' + c.assign_url + '">';
@@ -256,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         tbody.innerHTML = html;
 
-        // Bind assign interviewer events
         tbody.querySelectorAll('.assign-interviewer').forEach(function (select) {
             select.addEventListener('change', function () {
                 assignInterviewer(this);
@@ -264,17 +237,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Render stats
     function renderStats(stats) {
         document.getElementById('stat-total').textContent = stats.total;
         document.getElementById('stat-pending').textContent = stats.pending;
-        document.getElementById('stat-not-cleared').textContent = stats.not_cleared;
-        document.getElementById('stat-in-progress').textContent = stats.in_progress;
+        document.getElementById('stat-on-hold').textContent = stats.on_hold;
+        document.getElementById('stat-selected').textContent = stats.selected;
         document.getElementById('stat-rejected').textContent = stats.rejected;
-        document.getElementById('stat-final-selected').textContent = stats.final_selected;
     }
 
-    // Render pagination
     function renderPagination(pg) {
         const wrapper = document.getElementById('pagination-wrapper');
         const info = document.getElementById('table-info');
@@ -294,14 +264,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let html = '<div class="flex items-center gap-1">';
 
-        // Previous
         if (pg.current_page > 1) {
             html += '<button class="btn-outline btn-sm page-btn" data-page="' + (pg.current_page - 1) + '">Prev</button>';
         } else {
             html += '<button class="btn-outline btn-sm opacity-50 cursor-not-allowed" disabled>Prev</button>';
         }
 
-        // Page numbers
         var pages = getPageNumbers(pg.current_page, pg.last_page);
         pages.forEach(function (p) {
             if (p === '...') {
@@ -313,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Next
         if (pg.current_page < pg.last_page) {
             html += '<button class="btn-outline btn-sm page-btn" data-page="' + (pg.current_page + 1) + '">Next</button>';
         } else {
@@ -323,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function () {
         html += '</div>';
         wrapper.innerHTML = html;
 
-        // Bind page clicks
         wrapper.querySelectorAll('.page-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 fetchCandidates(parseInt(this.dataset.page));
@@ -331,7 +297,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Get smart page number array
     function getPageNumbers(current, last) {
         if (last <= 7) {
             var arr = [];
@@ -348,7 +313,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return pages;
     }
 
-    // Assign interviewer via AJAX
     function assignInterviewer(select) {
         var url = select.dataset.url;
         var value = select.value;
@@ -372,7 +336,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Escape HTML
     function escHtml(str) {
         if (str === null || str === undefined) return '';
         var div = document.createElement('div');
@@ -380,14 +343,12 @@ document.addEventListener('DOMContentLoaded', function () {
         return div.innerHTML;
     }
 
-    // Filter: instant on select change
     document.querySelectorAll('.filter-select').forEach(function (select) {
         select.addEventListener('change', function () {
             fetchCandidates(1);
         });
     });
 
-    // Filter: debounced on text input
     document.querySelectorAll('.filter-input').forEach(function (input) {
         input.addEventListener('input', function () {
             clearTimeout(debounceTimer);
@@ -397,14 +358,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Reset filters
     document.getElementById('reset-filters').addEventListener('click', function () {
         document.querySelectorAll('.filter-input').forEach(function (el) { el.value = ''; });
         document.querySelectorAll('.filter-select').forEach(function (el) { el.value = ''; });
         fetchCandidates(1);
     });
 
-    // Initial load
     fetchCandidates(1);
 });
 </script>

@@ -31,6 +31,7 @@ class InterviewRound extends Model
         return match ($this->result) {
             'cleared' => 'Cleared',
             'not_cleared' => 'Not Cleared',
+            'on_hold' => 'On Hold',
             default => ucfirst($this->result),
         };
     }
@@ -40,6 +41,7 @@ class InterviewRound extends Model
         return match ($this->result) {
             'cleared' => 'bg-green-100 text-green-800',
             'not_cleared' => 'bg-red-100 text-red-800',
+            'on_hold' => 'bg-purple-100 text-purple-800',
             default => 'bg-gray-100 text-gray-800',
         };
     }
