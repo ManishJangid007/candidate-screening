@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SampleCandidatesExport;
 use App\Imports\CandidatesImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExcelController extends Controller
 {
+    public function sample()
+    {
+        return Excel::download(new SampleCandidatesExport(), 'sample_candidates.xlsx');
+    }
+
     public function upload(Request $request)
     {
         $request->validate([

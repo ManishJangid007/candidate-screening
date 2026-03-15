@@ -6,7 +6,8 @@
     <h1 class="text-2xl font-bold tracking-tight">Candidate Screening Dashboard</h1>
 
     @if(Auth::user()->isAdmin())
-    <div>
+    <div class="flex items-center gap-2">
+        <a href="{{ route('excel.sample') }}" class="btn-outline">Sample Excel</a>
         <button type="button" onclick="document.getElementById('excel-file-input').click();" class="btn-primary">
             Upload Excel
         </button>
@@ -21,31 +22,31 @@
 {{-- Stats Section --}}
 <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
     <div class="card">
-        <div class="card-content pt-4 pb-4 text-center">
+        <div class="p-4 text-center">
             <p class="text-2xl font-bold" id="stat-total">{{ $stats['total'] }}</p>
             <p class="text-xs text-muted-foreground mt-1">Total</p>
         </div>
     </div>
     <div class="card">
-        <div class="card-content pt-4 pb-4 text-center">
+        <div class="p-4 text-center">
             <p class="text-2xl font-bold text-yellow-600" id="stat-pending">{{ $stats['pending'] }}</p>
             <p class="text-xs text-muted-foreground mt-1">Pending</p>
         </div>
     </div>
     <div class="card">
-        <div class="card-content pt-4 pb-4 text-center">
+        <div class="p-4 text-center">
             <p class="text-2xl font-bold text-purple-600" id="stat-on-hold">{{ $stats['on_hold'] }}</p>
             <p class="text-xs text-muted-foreground mt-1">On Hold</p>
         </div>
     </div>
     <div class="card">
-        <div class="card-content pt-4 pb-4 text-center">
+        <div class="p-4 text-center">
             <p class="text-2xl font-bold text-green-600" id="stat-selected">{{ $stats['selected'] }}</p>
             <p class="text-xs text-muted-foreground mt-1">Selected</p>
         </div>
     </div>
     <div class="card">
-        <div class="card-content pt-4 pb-4 text-center">
+        <div class="p-4 text-center">
             <p class="text-2xl font-bold text-red-600" id="stat-rejected">{{ $stats['rejected'] }}</p>
             <p class="text-xs text-muted-foreground mt-1">Rejected</p>
         </div>
@@ -318,6 +319,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var value = select.value;
         if (!value) return;
 
+        select.disabled = true;
+
         fetch(url, {
             method: 'POST',
             headers: {
@@ -330,9 +333,17 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(function (res) { return res.json(); })
         .then(function (data) {
+            select.disabled = false;
             if (data.success) {
-                fetchCandidates(currentPage);
+                // Brief green flash to confirm
+                select.style.borderColor = '#22c55e';
+                setTimeout(function () {
+                    select.style.borderColor = '';
+                }, 1000);
             }
+        })
+        .catch(function () {
+            select.disabled = false;
         });
     }
 
