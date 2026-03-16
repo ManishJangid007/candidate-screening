@@ -11,22 +11,25 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@screening.com'],
+            ['email' => 'admin@infotech.works'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin@01'),
                 'role' => 'admin',
             ]
         );
 
         $interviewers = config('interviewers');
         foreach ($interviewers as $name) {
-            $email = strtolower(str_replace(' ', '.', $name)) . '@screening.com';
+            $firstName = explode(' ', $name)[0];
+            $email = strtolower($firstName) . '@infotech.works';
+            $password = strtolower($firstName) . '@01';
+
             User::updateOrCreate(
                 ['email' => $email],
                 [
                     'name' => $name,
-                    'password' => Hash::make('password'),
+                    'password' => Hash::make($password),
                     'role' => 'interviewer',
                 ]
             );
