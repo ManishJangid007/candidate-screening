@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Candidate;
 use App\Models\InterviewRound;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class CandidateController extends Controller
@@ -43,7 +44,7 @@ class CandidateController extends Controller
         }
 
         $candidates = $query->paginate(15)->withQueryString();
-        $interviewers = config('interviewers');
+        $interviewers = User::where('role', 'interviewer')->orderBy('name')->pluck('name')->toArray();
 
         // Stats query scoped by role
         $statsQuery = Candidate::query();
@@ -120,7 +121,7 @@ class CandidateController extends Controller
         }
 
         $candidate->load('interviewRounds');
-        $interviewers = config('interviewers');
+        $interviewers = User::where('role', 'interviewer')->orderBy('name')->pluck('name')->toArray();
 
         return view('candidates.show', compact('candidate', 'interviewers'));
     }
@@ -182,7 +183,7 @@ class CandidateController extends Controller
 
     public function changeInterviewer(Request $request, Candidate $candidate)
     {
-        $interviewers = config('interviewers');
+        $interviewers = User::where('role', 'interviewer')->orderBy('name')->pluck('name')->toArray();
 
         $request->validate([
             'interviewer' => ['required', 'in:' . implode(',', $interviewers)],
@@ -196,7 +197,7 @@ class CandidateController extends Controller
 
     public function assignInterviewer(Request $request, Candidate $candidate)
     {
-        $interviewers = config('interviewers');
+        $interviewers = User::where('role', 'interviewer')->orderBy('name')->pluck('name')->toArray();
 
         $request->validate([
             'interviewer' => ['required', 'in:' . implode(',', $interviewers)],
