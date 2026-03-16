@@ -25,6 +25,7 @@ class CandidatesImport implements ToModel, WithHeadingRow, WithValidation, Skips
             ['candidate_id' => $row['id']],
             [
                 'student_name' => $row['student_name'],
+                'github_profile' => $row['github_profile'] ?? null,
                 'aptitude_score' => $row['aptitude_score'] ?? null,
                 'test_score' => $row['test_score'] ?? null,
                 'video_score' => $row['video_score'] ?? null,
@@ -39,6 +40,7 @@ class CandidatesImport implements ToModel, WithHeadingRow, WithValidation, Skips
         return [
             'id' => ['required'],
             'student_name' => ['required'],
+            'github_profile' => ['nullable', 'string'],
             'aptitude_score' => ['nullable', 'integer'],
             'test_score' => ['nullable', 'integer'],
             'video_score' => ['nullable', 'integer'],

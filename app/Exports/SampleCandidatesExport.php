@@ -11,14 +11,14 @@ class SampleCandidatesExport implements FromArray, WithHeadings, WithStyles
 {
     public function headings(): array
     {
-        return ['ID', 'Student Name', 'Aptitude Score', 'Test Score', 'Video Score'];
+        return ['ID', 'Student Name', 'GitHub Profile', 'Aptitude Score', 'Test Score', 'Video Score'];
     }
 
     public function array(): array
     {
         return [
-            ['101', 'John Doe', 85, 78, 90],
-            ['102', 'Jane Smith', 92, 88, 76],
+            ['101', 'John Doe', 'https://github.com/johndoe', 85, 78, 90],
+            ['102', 'Jane Smith', '', 92, 88, 76],
         ];
     }
 

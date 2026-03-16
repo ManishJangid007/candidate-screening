@@ -10,6 +10,7 @@ class Candidate extends Model
     protected $fillable = [
         'candidate_id',
         'student_name',
+        'github_profile',
         'aptitude_score',
         'test_score',
         'video_score',

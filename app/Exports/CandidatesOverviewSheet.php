@@ -35,6 +35,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
         return [
             'Candidate ID',
             'Student Name',
+            'GitHub Profile',
             'Aptitude Score',
             'Test Score',
             'Video Score',
@@ -69,6 +70,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
             return [
                 $c->candidate_id,
                 $c->student_name,
+                $c->github_profile ?? '-',
                 $aptitude ?? '-',
                 $test ?? '-',
                 $video ?? '-',
@@ -94,22 +96,23 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
         return [
             'A' => 14,
             'B' => 22,
-            'C' => 14,
-            'D' => 12,
+            'C' => 30,
+            'D' => 14,
             'E' => 12,
             'F' => 12,
-            'G' => 14,
+            'G' => 12,
             'H' => 14,
-            'I' => 20,
-            'J' => 14,
-            'K' => 18,
-            'L' => 14,
-            'M' => 18,
-            'N' => 14,
-            'O' => 18,
-            'P' => 14,
-            'Q' => 18,
-            'R' => 22,
+            'I' => 14,
+            'J' => 20,
+            'K' => 14,
+            'L' => 18,
+            'M' => 14,
+            'N' => 18,
+            'O' => 14,
+            'P' => 18,
+            'Q' => 14,
+            'R' => 18,
+            'S' => 22,
         ];
     }
 
@@ -143,7 +146,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $lastRow = $this->candidates->count() + 1;
-                $lastCol = 'R';
+                $lastCol = 'S';
 
                 // Header row height
                 $sheet->getRowDimension(1)->setRowHeight(30);
@@ -162,8 +165,8 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
                     ],
                 ]);
 
-                // Center align score and round columns
-                $sheet->getStyle("C2:G{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Center align score and round columns (D-H now, shifted by GitHub col C)
+                $sheet->getStyle("D2:H{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle("A2:A{$lastRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 // Alternating row colors
@@ -178,7 +181,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
                     }
                 }
 
-                // Color-code status column (H)
+                // Color-code status column (I)
                 $statusColors = [
                     'Pending' => 'FEF3C7',
                     'On Hold' => 'EDE9FE',
@@ -187,9 +190,9 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
                 ];
 
                 for ($row = 2; $row <= $lastRow; $row++) {
-                    $status = $sheet->getCell("H{$row}")->getValue();
+                    $status = $sheet->getCell("I{$row}")->getValue();
                     if (isset($statusColors[$status])) {
-                        $sheet->getStyle("H{$row}")->applyFromArray([
+                        $sheet->getStyle("I{$row}")->applyFromArray([
                             'fill' => [
                                 'fillType' => Fill::FILL_SOLID,
                                 'startColor' => ['rgb' => $statusColors[$status]],
@@ -200,14 +203,14 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
                     }
                 }
 
-                // Color-code round results (J, L, N, P)
+                // Color-code round results (K, M, O, Q)
                 $resultColors = [
                     'Cleared' => 'DCFCE7',
                     'Not Cleared' => 'FEE2E2',
                     'On Hold' => 'EDE9FE',
                 ];
 
-                foreach (['J', 'L', 'N', 'P'] as $col) {
+                foreach (['K', 'M', 'O', 'Q'] as $col) {
                     for ($row = 2; $row <= $lastRow; $row++) {
                         $result = $sheet->getCell("{$col}{$row}")->getValue();
                         if (isset($resultColors[$result])) {
