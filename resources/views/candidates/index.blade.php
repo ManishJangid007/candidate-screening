@@ -2,9 +2,7 @@
 
 @section('content')
 {{-- Header Section --}}
-<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-    <h1 class="text-2xl font-bold tracking-tight">Candidate Screening Dashboard</h1>
-
+<div class="flex justify-end mb-6">
     @if(Auth::user()->isAdmin())
     <div class="flex items-center gap-2">
         <a href="{{ route('excel.export') }}" class="btn-outline">Export Report</a>
