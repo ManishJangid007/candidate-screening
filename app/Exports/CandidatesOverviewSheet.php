@@ -49,8 +49,6 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
             'R2 Interviewer',
             'R3 Result',
             'R3 Interviewer',
-            'R4 Result',
-            'R4 Interviewer',
             'Last Updated',
         ];
     }
@@ -84,8 +82,6 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
                 isset($rounds[2]) ? $rounds[2]->interviewer : '-',
                 isset($rounds[3]) ? $rounds[3]->formatted_result : '-',
                 isset($rounds[3]) ? $rounds[3]->interviewer : '-',
-                isset($rounds[4]) ? $rounds[4]->formatted_result : '-',
-                isset($rounds[4]) ? $rounds[4]->interviewer : '-',
                 $c->updated_at->format('d M Y, h:i A'),
             ];
         })->toArray();
@@ -110,9 +106,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
             'N' => 18,
             'O' => 14,
             'P' => 18,
-            'Q' => 14,
-            'R' => 18,
-            'S' => 22,
+            'Q' => 22,
         ];
     }
 
@@ -146,7 +140,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $lastRow = $this->candidates->count() + 1;
-                $lastCol = 'S';
+                $lastCol = 'Q';
 
                 // Header row height
                 $sheet->getRowDimension(1)->setRowHeight(30);
@@ -210,7 +204,7 @@ class CandidatesOverviewSheet implements FromArray, WithTitle, WithHeadings, Wit
                     'On Hold' => 'EDE9FE',
                 ];
 
-                foreach (['K', 'M', 'O', 'Q'] as $col) {
+                foreach (['K', 'M', 'O'] as $col) {
                     for ($row = 2; $row <= $lastRow; $row++) {
                         $result = $sheet->getCell("{$col}{$row}")->getValue();
                         if (isset($resultColors[$result])) {

@@ -39,7 +39,6 @@ class SummarySheet implements FromArray, WithTitle, WithStyles, WithColumnWidths
         $round1 = $this->candidates->where('current_round', 1)->count();
         $round2 = $this->candidates->where('current_round', 2)->count();
         $round3 = $this->candidates->where('current_round', 3)->count();
-        $round4 = $this->candidates->where('current_round', 4)->count();
 
         $avgAptitude = round($this->candidates->whereNotNull('aptitude_score')->avg('aptitude_score'), 1);
         $avgTest = round($this->candidates->whereNotNull('test_score')->avg('test_score'), 1);
@@ -82,7 +81,6 @@ class SummarySheet implements FromArray, WithTitle, WithStyles, WithColumnWidths
         $rows[] = ['Round 1', $round1];
         $rows[] = ['Round 2', $round2];
         $rows[] = ['Round 3', $round3];
-        $rows[] = ['Round 4', $round4];
         $rows[] = [''];
 
         // Score averages
@@ -133,7 +131,7 @@ class SummarySheet implements FromArray, WithTitle, WithStyles, WithColumnWidths
                 ]);
 
                 // Section headers
-                $sectionRows = [4, 11, 17, 22];
+                $sectionRows = [4, 11, 16, 21];
                 foreach ($sectionRows as $row) {
                     $sheet->getStyle("A{$row}:E{$row}")->applyFromArray([
                         'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
@@ -147,7 +145,7 @@ class SummarySheet implements FromArray, WithTitle, WithStyles, WithColumnWidths
                 }
 
                 // Data rows styling
-                $dataRanges = [[5, 9], [12, 15], [18, 20]];
+                $dataRanges = [[5, 9], [12, 14], [17, 19]];
                 foreach ($dataRanges as [$start, $end]) {
                     $sheet->getStyle("A{$start}:B{$end}")->applyFromArray([
                         'borders' => [
@@ -168,7 +166,7 @@ class SummarySheet implements FromArray, WithTitle, WithStyles, WithColumnWidths
                 }
 
                 // Interviewer table header
-                $intHeaderRow = 22;
+                $intHeaderRow = 21;
                 $lastIntRow = $intHeaderRow + $sheet->getHighestRow() - $intHeaderRow;
 
                 // Style interviewer data rows if they exist

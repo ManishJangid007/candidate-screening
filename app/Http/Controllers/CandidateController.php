@@ -154,7 +154,7 @@ class CandidateController extends Controller
         $interviewRound->save();
 
         if ($validated['result'] === 'cleared') {
-            if ($candidate->current_round < 4) {
+            if ($candidate->current_round < 3) {
                 $candidate->current_round = $candidate->current_round + 1;
                 $candidate->status = 'pending';
                 $candidate->interviewer = null;
