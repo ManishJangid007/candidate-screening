@@ -46,11 +46,14 @@ class CandidateController extends Controller
         $candidates = $query->paginate(15)->withQueryString();
         $interviewers = User::where('role', 'interviewer')->orderBy('name')->pluck('name')->toArray();
 
-        // Stats query scoped by role
+        // Status stats scoped by role
         $statsQuery = Candidate::query();
         if ($user->role === 'interviewer') {
             $statsQuery->where('interviewer', $user->name);
         }
+
+        // Round stats always show all candidates
+        $globalQuery = Candidate::query();
 
         $stats = [
             'total' => (clone $statsQuery)->count(),
@@ -58,6 +61,9 @@ class CandidateController extends Controller
             'on_hold' => (clone $statsQuery)->where('status', 'on_hold')->count(),
             'selected' => (clone $statsQuery)->where('status', 'selected')->count(),
             'rejected' => (clone $statsQuery)->where('status', 'rejected')->count(),
+            'round_1' => (clone $globalQuery)->where('current_round', 1)->count(),
+            'round_2' => (clone $globalQuery)->where('current_round', 2)->count(),
+            'round_3' => (clone $globalQuery)->where('current_round', 3)->count(),
         ];
 
         if ($request->ajax()) {

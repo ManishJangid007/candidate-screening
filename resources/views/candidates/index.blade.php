@@ -52,6 +52,28 @@
     </div>
 </div>
 
+{{-- Round Distribution --}}
+<div class="grid grid-cols-3 gap-3 mb-6">
+    <div class="card">
+        <div class="p-3 text-center">
+            <p class="text-lg font-bold" id="stat-round-1">{{ $stats['round_1'] }}</p>
+            <p class="text-xs text-muted-foreground mt-0.5">Round 1</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="p-3 text-center">
+            <p class="text-lg font-bold" id="stat-round-2">{{ $stats['round_2'] }}</p>
+            <p class="text-xs text-muted-foreground mt-0.5">Round 2</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="p-3 text-center">
+            <p class="text-lg font-bold" id="stat-round-3">{{ $stats['round_3'] }}</p>
+            <p class="text-xs text-muted-foreground mt-0.5">Round 3</p>
+        </div>
+    </div>
+</div>
+
 {{-- Filter Section --}}
 <div class="card mb-6">
     <div class="card-header">
@@ -242,6 +264,9 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('stat-on-hold').textContent = stats.on_hold;
         document.getElementById('stat-selected').textContent = stats.selected;
         document.getElementById('stat-rejected').textContent = stats.rejected;
+        document.getElementById('stat-round-1').textContent = stats.round_1;
+        document.getElementById('stat-round-2').textContent = stats.round_2;
+        document.getElementById('stat-round-3').textContent = stats.round_3;
     }
 
     function renderPagination(pg) {
@@ -374,6 +399,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     fetchCandidates(1);
+
+    // Poll every 2 seconds — refresh table when stats change
+    var lastStatsJson = '';
+    setInterval(function () {
+        var params = new URLSearchParams();
+        document.querySelectorAll('.filter-input, .filter-select').forEach(function (el) {
+            if (el.value) params.set(el.name, el.value);
+        });
+        params.set('page', currentPage);
+
+        fetch(APP_CONFIG.indexUrl + '?' + params.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            },
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            var newStatsJson = JSON.stringify(data.stats);
+            renderStats(data.stats);
+            if (lastStatsJson && newStatsJson !== lastStatsJson) {
+                renderTable(data.data);
+                renderPagination(data.pagination);
+            }
+            lastStatsJson = newStatsJson;
+        })
+        .catch(function () {});
+    }, 2000);
 });
 </script>
 @endsection
