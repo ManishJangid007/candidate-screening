@@ -61,9 +61,9 @@ class CandidateController extends Controller
             'on_hold' => (clone $statsQuery)->where('status', 'on_hold')->count(),
             'selected' => (clone $statsQuery)->where('status', 'selected')->count(),
             'rejected' => (clone $statsQuery)->where('status', 'rejected')->count(),
-            'round_1' => (clone $globalQuery)->where('current_round', 1)->count(),
-            'round_2' => (clone $globalQuery)->where('current_round', 2)->count(),
-            'round_3' => (clone $globalQuery)->where('current_round', 3)->count(),
+            'round_1' => (clone $globalQuery)->where('current_round', 1)->whereNotIn('status', ['rejected', 'selected'])->count(),
+            'round_2' => (clone $globalQuery)->where('current_round', 2)->whereNotIn('status', ['rejected', 'selected'])->count(),
+            'round_3' => (clone $globalQuery)->where('current_round', 3)->whereNotIn('status', ['rejected', 'selected'])->count(),
         ];
 
         if ($request->ajax()) {
